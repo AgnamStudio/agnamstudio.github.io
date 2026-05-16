@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AGNAM Studio — Official Games</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --blue: #0066FF;
+  --blue2: #3385FF;
+  --glow: rgba(0,102,255,0.13);
+  --glow2: rgba(0,102,255,0.07);
+  --white: #fff;
+  --off: #F4F7FB;
+  --gray: #8A94A6;
+  --dark: #080E1E;
+  --border: rgba(0,102,255,0.13);
+  --radius: 16px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--dark);overflow-x:hidden;min-height:100vh}
+
+/* GRID BG */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(0,102,255,0.035) 1px,transparent 1px),linear-gradient(90deg,rgba(0,102,255,0.035) 1px,transparent 1px);
+  background-size:52px 52px;pointer-events:none;z-index:0;
+}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:66px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;
+  background:rgba(255,255,255,0.93);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
+}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;letter-spacing:-0.5px;color:var(--dark);text-decoration:none}
+.logo span{color:var(--blue)}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{font-size:0.875rem;font-weight:500;color:var(--gray);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--blue)}
+.nav-right{display:flex;align-items:center;gap:10px}
+
+/* HERO */
+.hero{
+  position:relative;z-index:1;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:120px 24px 80px;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--glow);border:1px solid rgba(0,102,255,0.2);
+  color:var(--blue);font-size:0.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:6px 18px;border-radius:100px;margin-bottom:28px;
+  animation:fadeUp .6s ease both;
+}
+.hero h1{
+  font-family:'Syne',sans-serif;font-size:clamp(2.6rem,7vw,5.2rem);
+  font-weight:800;line-height:1.05;letter-spacing:-2px;max-width:800px;
+  animation:fadeUp .6s .1s ease both;
+}
+.hero h1 em{color:var(--blue);font-style:normal;position:relative}
+.hero h1 em::after{content:'';position:absolute;bottom:2px;left:0;right:0;height:3px;background:var(--blue);border-radius:2px;opacity:.25}
+.hero-sub{
+  margin-top:22px;font-size:1.1rem;color:var(--gray);max-width:480px;line-height:1.75;font-weight:300;
+  animation:fadeUp .6s .2s ease both;
+}
+.hero-cta{margin-top:40px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;animation:fadeUp .6s .3s ease both}
+
+/* BUTTONS */
+.btn{
+  font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:600;
+  padding:11px 26px;border-radius:10px;cursor:pointer;border:none;
+  transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:0 4px 18px rgba(0,102,255,.28)}
+.btn-primary:hover{background:var(--blue2);box-shadow:0 6px 28px rgba(0,102,255,.38);transform:translateY(-1px)}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--dark)}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+.btn-ghost{background:var(--glow);color:var(--blue);border:1px solid rgba(0,102,255,.18)}
+.btn-ghost:hover{background:rgba(0,102,255,.2)}
+.btn-sm{padding:8px 18px;font-size:.8rem;border-radius:8px}
+
+/* STATS BAR */
+.stats-bar{
+  display:flex;justify-content:center;margin-top:64px;
+  border:1px solid var(--border);border-radius:var(--radius);
+  background:#fff;overflow:hidden;
+  box-shadow:0 4px 32px rgba(0,102,255,.06);
+  animation:fadeUp .6s .4s ease both;
+}
+.stat{padding:24px 44px;text-align:center;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-n{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;color:var(--blue)}
+.stat-l{font-size:.72rem;color:var(--gray);margin-top:3px;font-weight:600;letter-spacing:.07em;text-transform:uppercase}
+
+/* SECTION */
+section{position:relative;z-index:1;padding:90px 48px;max-width:1240px;margin:0 auto}
+.sec-label{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:12px}
+.sec-title{font-family:'Syne',sans-serif;font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:12px}
+.sec-sub{color:var(--gray);font-size:.95rem;line-height:1.75;max-width:480px;margin-bottom:48px}
+.divider{position:relative;z-index:1;height:1px;background:var(--border);margin:0 48px}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:40px}
+.filter-btn{
+  font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:600;
+  padding:8px 20px;border-radius:100px;border:1.5px solid var(--border);
+  background:#fff;color:var(--gray);cursor:pointer;transition:all .2s;
+}
+.filter-btn.active,.filter-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 3px 12px rgba(0,102,255,.25)}
+
+/* GAMES GRID */
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
+.game-card{
+  background:#fff;border:1px solid var(--border);border-radius:20px;
+  overflow:hidden;transition:all .25s;position:relative;
+}
+.game-card:hover{box-shadow:0 12px 48px rgba(0,102,255,.12);transform:translateY(-5px)}
+.game-thumb{
+  width:100%;height:180px;
+  background:linear-gradient(135deg,var(--glow2),rgba(0,102,255,.12));
+  display:flex;align-items:center;justify-content:center;
+  font-size:3.5rem;position:relative;overflow:hidden;
+}
+.game-thumb::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 50%,rgba(0,102,255,.06));
+}
+.game-badge{
+  position:absolute;top:12px;right:12px;
+  font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:4px 10px;border-radius:100px;
+}
+.badge-browser{background:rgba(0,200,120,.15);color:#00a870;border:1px solid rgba(0,200,120,.25)}
+.badge-install{background:rgba(0,102,255,.12);color:var(--blue);border:1px solid rgba(0,102,255,.2)}
+.badge-new{background:rgba(255,100,0,.1);color:#e05a00;border:1px solid rgba(255,100,0,.2)}
+.game-info{padding:22px}
+.game-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:6px}
+.game-desc{font-size:.83rem;color:var(--gray);line-height:1.6;margin-bottom:16px}
+.game-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.game-tag{font-size:.7rem;font-weight:600;color:var(--blue);background:var(--glow);padding:4px 10px;border-radius:6px}
+.game-actions{display:flex;gap:8px}
+
+/* EMPTY STATE */
+.empty-state{
+  grid-column:1/-1;text-align:center;padding:80px 20px;
+  color:var(--gray);font-size:.95rem;
+}
+.empty-state .icon{font-size:3rem;margin-bottom:16px;opacity:.4}
+
+/* ABOUT STRIP */
+.about-strip{
+  background:linear-gradient(135deg,var(--dark) 0%,#0d1535 100%);
+  color:#fff;border-radius:24px;padding:64px;
+  display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;
+  position:relative;overflow:hidden;
+}
+.about-strip::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,102,255,.25),transparent 70%);
+}
+.about-strip h2{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;line-height:1.2;letter-spacing:-1px;margin-bottom:16px}
+.about-strip p{color:rgba(255,255,255,.6);line-height:1.75;font-size:.9rem}
+.about-feats{display:flex;flex-direction:column;gap:16px}
+.about-feat{display:flex;align-items:flex-start;gap:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px}
+.feat-icon{font-size:1.4rem;flex-shrink:0}
+.feat-text h4{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:4px}
+.feat-text p{font-size:.8rem;color:rgba(255,255,255,.5);line-height:1.5}
+
+/* FOOTER */
+footer{
+  position:relative;z-index:1;
+  border-top:1px solid var(--border);padding:36px 48px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+}
+footer p{font-size:.8rem;color:var(--gray)}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-size:.8rem;color:var(--gray);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--blue)}
+
+/* ADMIN TRIGGER — tiny hidden dot bottom right */
+.admin-trigger{
+  position:fixed;bottom:16px;right:16px;z-index:500;
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(0,102,255,.18);cursor:pointer;border:none;
+  transition:all .3s;
+}
+.admin-trigger:hover{background:var(--blue);transform:scale(1.5)}
+
+/* MODAL BASE */
+.overlay{
+  display:none;position:fixed;inset:0;z-index:1000;
+  background:rgba(8,14,30,.6);backdrop-filter:blur(8px);
+  align-items:center;justify-content:center;padding:20px;
+}
+.overlay.open{display:flex}
+.modal{
+  background:#fff;border-radius:24px;padding:44px;
+  width:100%;max-width:480px;max-height:92vh;overflow-y:auto;
+  box-shadow:0 40px 100px rgba(0,0,0,.18);
+  animation:modalIn .3s ease;border:1px solid var(--border);position:relative;
+}
+.modal-close{
+  position:absolute;top:18px;right:18px;
+  width:32px;height:32px;background:var(--off);border:none;
+  border-radius:8px;cursor:pointer;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;color:var(--gray);transition:all .2s;
+}
+.modal-close:hover{background:var(--glow);color:var(--blue)}
+.modal h2{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
+.modal p.msub{font-size:.85rem;color:var(--gray);margin-bottom:28px;line-height:1.5}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:.78rem;font-weight:600;margin-bottom:7px;letter-spacing:.02em}
+.fg input,.fg select,.fg textarea{
+  width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:.875rem;color:var(--dark);outline:none;
+  transition:border-color .2s,box-shadow .2s;background:#fff;
+}
+.fg select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238A94A6' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer}
+.fg textarea{resize:vertical;min-height:80px;line-height:1.6}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--blue);box-shadow:0 0 0 4px var(--glow)}
+.fsubmit{
+  width:100%;padding:13px;background:var(--blue);color:#fff;border:none;
+  border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;
+  cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(0,102,255,.28);margin-top:4px;
+}
+.fsubmit:hover{background:var(--blue2);transform:translateY(-1px)}
+.fsubmit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.msg{margin-top:12px;font-size:.8rem;padding:10px 14px;border-radius:8px;display:none;text-align:center}
+.msg.err{background:rgba(220,50,50,.08);color:#c0392b;display:block}
+.msg.ok{background:rgba(0,200,100,.1);color:#00a855;display:block}
+
+/* ADMIN PANEL */
+.admin-panel{max-width:600px}
+.admin-tabs{display:flex;gap:0;background:var(--off);border-radius:10px;padding:4px;margin-bottom:24px}
+.atab{flex:1;text-align:center;padding:9px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--gray);border:none;background:transparent;transition:all .2s}
+.atab.active{background:#fff;color:var(--blue);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.games-list{display:flex;flex-direction:column;gap:10px;max-height:380px;overflow-y:auto;padding-right:4px}
+.admin-game-row{
+  display:flex;align-items:center;gap:12px;
+  background:var(--off);border:1px solid var(--border);border-radius:12px;padding:14px 16px;
+}
+.agr-icon{font-size:1.6rem;flex-shrink:0}
+.agr-info{flex:1;min-width:0}
+.agr-info strong{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;display:block}
+.agr-info span{font-size:.75rem;color:var(--gray)}
+.agr-del{background:rgba(220,50,50,.08);border:1px solid rgba(220,50,50,.15);color:#c0392b;border-radius:8px;padding:6px 12px;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;flex-shrink:0}
+.agr-del:hover{background:rgba(220,50,50,.15)}
+.no-games{text-align:center;padding:32px;color:var(--gray);font-size:.85rem}
+
+/* LOCK SCREEN */
+.lock-screen{text-align:center}
+.lock-icon{font-size:3rem;margin-bottom:16px;display:block}
+
+/* PLAY MODAL */
+.play-modal{max-width:520px}
+.play-emoji{font-size:4rem;text-align:center;margin-bottom:16px}
+.play-title{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;text-align:center;margin-bottom:8px}
+.play-desc{color:var(--gray);text-align:center;font-size:.875rem;line-height:1.7;margin-bottom:28px}
+.play-btns{display:flex;flex-direction:column;gap:12px}
+.play-btn-main{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:16px;border-radius:14px;font-family:'DM Sans',sans-serif;
+  font-size:1rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;text-decoration:none;
+}
+.play-btn-browser{background:var(--blue);color:#fff;box-shadow:0 4px 18px rgba(0,102,255,.28)}
+.play-btn-browser:hover{background:var(--blue2);transform:translateY(-1px)}
+.play-btn-install{background:var(--off);border:1.5px solid var(--border);color:var(--dark)}
+.play-btn-install:hover{border-color:var(--blue);color:var(--blue)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+@media(max-width:768px){
+  nav{padding:0 20px}
+  .nav-links{display:none}
+  section{padding:60px 20px}
+  .hero{padding:100px 20px 60px}
+  .stats-bar{flex-direction:column}
+  .stat{border-right:none;border-bottom:1px solid var(--border)}
+  .stat:last-child{border-bottom:none}
+  .about-strip{grid-template-columns:1fr;padding:36px 24px}
+  footer{padding:28px 20px;flex-direction:column;text-align:center}
+  .divider{margin:0 20px}
+  .modal{padding:32px 22px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">AGNAM<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#games">Games</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#games" class="btn btn-primary btn-sm">🎮 Play Now</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🎮 Official Game Studio</div>
+  <h1>Play AGNAM<br><em>Official Games</em></h1>
+  <p class="hero-sub">Free games, apps & tools — made by AGNAM Studio. Play in browser or install on your device. No login needed.</p>
+  <div class="hero-cta">
+    <a href="#games" class="btn btn-primary" style="font-size:1rem;padding:14px 32px;border-radius:12px">Browse Games →</a>
+    <a href="#about" class="btn btn-outline" style="font-size:1rem;padding:14px 32px;border-radius:12px">About Studio</a>
+  </div>
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-n" id="totalGames">0</div><div class="stat-l">Games</div></div>
+    <div class="stat"><div class="stat-n">100%</div><div class="stat-l">Free</div></div>
+    <div class="stat"><div class="stat-n">0</div><div class="stat-l">Ads</div></div>
+    <div class="stat"><div class="stat-n">24/7</div><div class="stat-l">Online</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- GAMES -->
+<section id="games">
+  <div class="sec-label">Game Library</div>
+  <div class="sec-title">All Games</div>
+  <p class="sec-sub">Browse, play in browser, or install on your device. All free, forever.</p>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterGames('all',this)">All</button>
+    <button class="filter-btn" onclick="filterGames('browser',this)">🌐 Browser</button>
+    <button class="filter-btn" onclick="filterGames('install',this)">📥 Install</button>
+    <button class="filter-btn" onclick="filterGames('game',this)">🎮 Games</button>
+    <button class="filter-btn" onclick="filterGames('app',this)">📱 Apps</button>
+    <button class="filter-btn" onclick="filterGames('tool',this)">🔧 Tools</button>
+  </div>
+
+  <div class="games-grid" id="gamesGrid">
+    <div class="empty-state">
+      <div class="icon">🎮</div>
+      <p>No games yet. Check back soon!</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-strip">
+    <div>
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(0,102,255,.7);margin-bottom:12px">About AGNAM Studio</div>
+      <h2>Built for players.<br>Made with passion.</h2>
+      <p style="margin-top:14px">AGNAM Studio is an independent game studio creating free games, apps & tools for everyone. No ads, no paywalls, no login required.</p>
+    </div>
+    <div class="about-feats">
+      <div class="about-feat">
+        <div class="feat-icon">🎮</div>
+        <div class="feat-text"><h4>Original Games</h4><p>Every game is made in-house by AGNAM Studio team.</p></div>
+      </div>
+      <div class="about-feat">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-text"><h4>Instant Play</h4><p>Browser games load instantly — no download needed.</p></div>
+      </div>
+      <div class="about-feat">
+        <div class="feat-icon">🔒</div>
+        <div class="feat-text"><h4>Privacy First</h4><p>No accounts, no tracking, no personal data collected.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <a href="#" class="logo" style="font-size:1.1rem">AGNAM<span style="color:var(--blue)">.</span></a>
+  <p>© 2026 AGNAM Studio. All rights reserved.</p>
+  <div class="footer-links">
+    <a href="#">Games</a>
+    <a href="#">About</a>
+    <a href="mailto:agnamstudio@gmail.com">Contact</a>
+  </div>
+</footer>
+
+<!-- HIDDEN ADMIN TRIGGER -->
+<button class="admin-trigger" onclick="openAdmin()" title=""></button>
+
+<!-- ADMIN LOCK OVERLAY -->
+<div class="overlay" id="lockOverlay">
+  <div class="modal" style="max-width:380px">
+    <button class="modal-close" onclick="closeOverlay('lockOverlay')">✕</button>
+    <div class="lock-screen">
+      <span class="lock-icon">🔐</span>
+      <h2>Admin Panel</h2>
+      <p class="msub">Enter password to access the studio admin panel.</p>
+      <div class="fg">
+        <input type="password" id="adminPwInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkAdminPw()"/>
+      </div>
+      <button class="fsubmit" onclick="checkAdminPw()">Unlock →</button>
+      <div class="msg" id="lockMsg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL OVERLAY -->
+<div class="overlay" id="adminOverlay">
+  <div class="modal admin-panel">
+    <button class="modal-close" onclick="closeOverlay('adminOverlay')">✕</button>
+    <h2>🛠 Admin Panel</h2>
+    <p class="msub">Add, manage and remove games from AGNAM Studio.</p>
+
+    <div class="admin-tabs">
+      <button class="atab active" id="atab1" onclick="switchAdminTab('add')">➕ Add Game</button>
+      <button class="atab" id="atab2" onclick="switchAdminTab('manage')">📋 Manage Games</button>
+    </div>
+
+    <!-- ADD GAME -->
+    <div id="addGameForm">
+      <div class="fg"><label>Game Title *</label><input type="text" id="gTitle" placeholder="e.g. Puzzle Rush"/></div>
+      <div class="fg"><label>Description *</label><textarea id="gDesc" placeholder="Short description of the game..."></textarea></div>
+      <div class="fg"><label>Emoji / Icon *</label><input type="text" id="gEmoji" placeholder="e.g. 🧩" maxlength="4"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="fg">
+          <label>Category *</label>
+          <select id="gCat">
+            <option value="game">🎮 Game</option>
+            <option value="app">📱 App</option>
+            <option value="tool">🔧 Tool</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Play Type *</label>
+          <select id="gType">
+            <option value="browser">🌐 Browser (Play)</option>
+            <option value="install">📥 Install</option>
+            <option value="both">Both</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg"><label>Play URL (browser link)</label><input type="url" id="gPlayUrl" placeholder="https://..."/></div>
+      <div class="fg"><label>Download / Install URL</label><input type="url" id="gInstallUrl" placeholder="https://..."/></div>
+      <div class="fg">
+        <label>Is New? </label>
+        <select id="gNew"><option value="0">No</option><option value="1">Yes — show NEW badge</option></select>
+      </div>
+      <button class="fsubmit" onclick="addGame()">Add Game to Library ✓</button>
+      <div class="msg" id="addMsg"></div>
+    </div>
+
+    <!-- MANAGE GAMES -->
+    <div id="manageGames" style="display:none">
+      <div class="games-list" id="adminGamesList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PLAY MODAL -->
+<div class="overlay" id="playOverlay">
+  <div class="modal play-modal">
+    <button class="modal-close" onclick="closeOverlay('playOverlay')">✕</button>
+    <div class="play-emoji" id="playEmoji">🎮</div>
+    <div class="play-title" id="playTitle"></div>
+    <div class="play-desc" id="playDesc"></div>
+    <div class="play-btns" id="playBtns"></div>
+  </div>
+</div>
+
+<script>
+// ========= ADMIN PASSWORD — CHANGE THIS =========
+const ADMIN_PASSWORD = 'agnam2026';
+// ================================================
+
+let games = JSON.parse(localStorage.getItem('agnam_games') || '[]');
+let currentFilter = 'all';
+
+function saveGames() { localStorage.setItem('agnam_games', JSON.stringify(games)); }
+
+function renderGames() {
+  const grid = document.getElementById('gamesGrid');
+  const filtered = currentFilter === 'all' ? games :
+    games.filter(g => g.type === currentFilter || g.cat === currentFilter);
+
+  document.getElementById('totalGames').textContent = games.length;
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty-state"><div class="icon">🎮</div><p>${games.length === 0 ? 'No games yet — check back soon!' : 'No games in this category yet.'}</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((g, i) => {
+    const idx = games.indexOf(g);
+    const typeBadge = g.type === 'browser' ? '<span class="game-badge badge-browser">🌐 Browser</span>'
+      : g.type === 'install' ? '<span class="game-badge badge-install">📥 Install</span>'
+      : '<span class="game-badge badge-browser">🌐 + 📥</span>';
+    const newBadge = g.isNew ? '<span class="game-badge badge-new" style="top:12px;left:12px">✨ New</span>' : '';
+    const catLabel = g.cat === 'game' ? '🎮 Game' : g.cat === 'app' ? '📱 App' : '🔧 Tool';
+    return `
+    <div class="game-card" style="animation:fadeUp .5s ${i*0.07}s ease both">
+      <div class="game-thumb">
+        <span>${g.emoji || '🎮'}</span>
+        ${typeBadge}${newBadge}
+      </div>
+      <div class="game-info">
+        <div class="game-title">${g.title}</div>
+        <div class="game-desc">${g.desc}</div>
+        <div class="game-meta">
+          <span class="game-tag">${catLabel}</span>
+          <div class="game-actions">
+            <button class="btn btn-primary btn-sm" onclick="openPlayModal(${idx})">
+              ${g.type === 'install' ? '📥 Install' : '▶ Play'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterGames(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGames();
+}
+
+function openPlayModal(idx) {
+  const g = games[idx];
+  document.getElementById('playEmoji').textContent = g.emoji || '🎮';
+  document.getElementById('playTitle').textContent = g.title;
+  document.getElementById('playDesc').textContent = g.desc;
+  let btns = '';
+  if (g.playUrl) btns += `<a href="${g.playUrl}" target="_blank" class="play-btn-main play-btn-browser">▶ Play in Browser</a>`;
+  if (g.installUrl) btns += `<a href="${g.installUrl}" target="_blank" class="play-btn-main play-btn-install">📥 Download & Install</a>`;
+  if (!g.playUrl && !g.installUrl) btns = `<p style="text-align:center;color:var(--gray);font-size:.85rem">Links coming soon!</p>`;
+  document.getElementById('playBtns').innerHTML = btns;
+  openOverlay('playOverlay');
+}
+
+// ADMIN
+function openAdmin() { openOverlay('lockOverlay'); document.getElementById('adminPwInput').value = ''; document.getElementById('lockMsg').className='msg'; }
+
+function checkAdminPw() {
+  const pw = document.getElementById('adminPwInput').value;
+  if (pw === ADMIN_PASSWORD) {
+    closeOverlay('lockOverlay');
+    openOverlay('adminOverlay');
+    renderAdminList();
+  } else {
+    const m = document.getElementById('lockMsg');
+    m.textContent = '❌ Wrong password. Try again.';
+    m.className = 'msg err';
+  }
+}
+
+function switchAdminTab(tab) {
+  document.getElementById('addGameForm').style.display = tab === 'add' ? 'block' : 'none';
+  document.getElementById('manageGames').style.display = tab === 'manage' ? 'block' : 'none';
+  document.getElementById('atab1').classList.toggle('active', tab === 'add');
+  document.getElementById('atab2').classList.toggle('active', tab === 'manage');
+  if (tab === 'manage') renderAdminList();
+}
+
+function addGame() {
+  const title = document.getElementById('gTitle').value.trim();
+  const desc = document.getElementById('gDesc').value.trim();
+  const emoji = document.getElementById('gEmoji').value.trim() || '🎮';
+  const cat = document.getElementById('gCat').value;
+  const type = document.getElementById('gType').value;
+  const playUrl = document.getElementById('gPlayUrl').value.trim();
+  const installUrl = document.getElementById('gInstallUrl').value.trim();
+  const isNew = document.getElementById('gNew').value === '1';
+  const msg = document.getElementById('addMsg');
+
+  if (!title || !desc) { msg.textContent = '⚠️ Title and description are required.'; msg.className='msg err'; return; }
+
+  games.unshift({ title, desc, emoji, cat, type, playUrl, installUrl, isNew, addedAt: Date.now() });
+  saveGames();
+  renderGames();
+
+  // Reset form
+  ['gTitle','gDesc','gEmoji','gPlayUrl','gInstallUrl'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('gNew').value = '0';
+  msg.textContent = '✅ Game added successfully!';
+  msg.className = 'msg ok';
+  setTimeout(() => { msg.className = 'msg'; }, 3000);
+}
+
+function renderAdminList() {
+  const el = document.getElementById('adminGamesList');
+  if (games.length === 0) { el.innerHTML = '<div class="no-games">No games added yet.</div>'; return; }
+  el.innerHTML = games.map((g, i) => `
+    <div class="admin-game-row">
+      <div class="agr-icon">${g.emoji || '🎮'}</div>
+      <div class="agr-info">
+        <strong>${g.title}</strong>
+        <span>${g.cat} · ${g.type}</span>
+      </div>
+      <button class="agr-del" onclick="deleteGame(${i})">Delete</button>
+    </div>
+  `).join('');
+}
+
+function deleteGame(i) {
+  if (!confirm(`Delete "${games[i].title}"?`)) return;
+  games.splice(i, 1);
+  saveGames();
+  renderGames();
+  renderAdminList();
+}
+
+// OVERLAY HELPERS
+function openOverlay(id) { document.getElementById(id).classList.add('open'); }
+function closeOverlay(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+
+// INIT
+renderGames();
+</script>
+</body>
+</html>
