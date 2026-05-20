@@ -325,7 +325,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;display:flex;ali
       </div>
       <div class="hero-stats">
         <div class="hstat"><span class="hstat-n" id="totalCount">0</span><div class="hstat-l">Games</div></div>
-        <div class="hstat"><span class="hstat-n" id="visitCount">0</span><div class="hstat-l">Visits</div></div>
+        <div class="hstat"><span class="hstat-n">0</span><div class="hstat-l">Ads</div></div>
         <div class="hstat"><span class="hstat-n">100%</span><div class="hstat-l">Free</div></div>
         <div class="hstat"><span class="hstat-n">✓</span><div class="hstat-l">Reviewed</div></div>
       </div>
@@ -526,6 +526,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;display:flex;ali
     <div class="admin-user-bar">
       <img id="adminAvatarImg" src="" class="admin-avatar-img" style="display:none"/>
       <span class="admin-email-txt" id="adminEmailTxt"></span>
+      <span style="font-size:.75rem;color:var(--blue);font-weight:700;background:var(--glow);padding:4px 10px;border-radius:8px">👁 <span id="adminVisitCount">-</span> visits</span>
       <button class="btn btn-primary btn-sm" onclick="loadAnalytics();closeOverlay('adminOverlay');openOverlay('analyticsOverlay')">📊 Analytics</button>
       <button class="admin-out-btn" onclick="adminLogout()">Sign Out</button>
     </div>
@@ -585,6 +586,7 @@ async function checkAdminLogin() {
       document.getElementById('adminEmailTxt').textContent = 'AGNAM Admin (' + username + ')';
       openOverlay('adminOverlay');
       loadPending();
+      loadAdminVisits();
       document.getElementById('adminUsername').value = '';
       document.getElementById('adminPassword').value = '';
     }
@@ -684,6 +686,9 @@ async function loadAnalytics() {
   document.getElementById('aTodayVisits').textContent = todayC||0;
   document.getElementById('aTotalGames').textContent = gCount||0;
   document.getElementById('aPending').textContent = pCount||0;
+  // Update admin visit display
+  const adminVisitEl = document.getElementById('adminVisitCount');
+  if(adminVisitEl) adminVisitEl.textContent = total||0;
 
   // Device breakdown
   const { data:vData } = await sb.from('visits').select('device');
@@ -890,6 +895,14 @@ async function rejectGame(id) {
   loadPending();
 }
 
+async function loadAdminVisits() {
+  try {
+    const { count } = await sb.from('visits').select('*', {count:'exact', head:true});
+    const el = document.getElementById('adminVisitCount');
+    if(el) el.textContent = count||0;
+  } catch(e) {}
+}
+
 async function loadApproved() {
   const { data }=await sb.from('games').select('*').order('approved_at',{ascending:false});
   const el=document.getElementById('approvedList');
@@ -903,9 +916,18 @@ async function loadApproved() {
 }
 
 async function deleteGame(id) {
-  if(!confirm('Remove this game?')) return;
-  await sb.from('games').delete().eq('id',id);
-  loadGames(); loadApproved();
+  if(!confirm('Is game ko store se remove karna chahte ho?')) return;
+  try {
+    const { error } = await sb.from('games').delete().eq('id', id);
+    if(error) {
+      alert('❌ Delete error: ' + error.message);
+      return;
+    }
+    loadGames();
+    loadApproved();
+  } catch(e) {
+    alert('❌ Error: ' + e.message);
+  }
 }
 
 function switchAdmin(tab) {
