@@ -764,28 +764,76 @@ function showSubmitForm() {
 
 // ===== SUBMIT =====
 async function submitGame() {
-  if(!devUser) { openDevModal(); return; }
-  const title=document.getElementById('sTitle').value.trim();
-  const emoji=document.getElementById('sEmoji').value.trim()||'🎮';
-  const desc=document.getElementById('sDesc').value.trim();
-  const cat=document.getElementById('sCat').value;
-  const type=document.getElementById('sType').value;
-  const playUrl=document.getElementById('sPlayUrl').value.trim();
-  const installUrl=document.getElementById('sInstallUrl').value.trim();
-  const msg=document.getElementById('submitMsg');
-  if(!title||!desc||!cat||!type) { msg.textContent='⚠️ Fill all required fields.'; msg.className='msg err'; return; }
-  const btn=document.getElementById('submitBtn');
-  btn.disabled=true; btn.textContent='Submitting...';
-  const meta=devUser.user_metadata||{};
-  const devName=meta.full_name||meta.name||devUser.email.split('@')[0];
-  const { error }=await sb.from('submissions').insert([{
-    title, dev:devName, description:desc, cat, type, emoji,
-    email:devUser.email, play_url:playUrl||null, install_url:installUrl||null, status:'pending'
-  }]);
-  btn.disabled=false; btn.textContent='Submit for Review →';
-  if(error) { msg.textContent='❌ '+error.message; msg.className='msg err'; return; }
-  document.getElementById('devSubmitWrap').style.display='none';
-  document.getElementById('submitSuccess').classList.add('show');
+  const msg = document.getElementById('submitMsg');
+
+  // Check login
+  if(!devUser) {
+    msg.textContent = '⚠️ Pehle login karo!';
+    msg.className = 'msg err';
+    return;
+  }
+
+  const title    = document.getElementById('sTitle').value.trim();
+  const emoji    = document.getElementById('sEmoji').value.trim() || '🎮';
+  const desc     = document.getElementById('sDesc').value.trim();
+  const cat      = document.getElementById('sCat').value;
+  const type     = document.getElementById('sType').value;
+  const playUrl    = document.getElementById('sPlayUrl').value.trim();
+  const installUrl = document.getElementById('sInstallUrl').value.trim();
+
+  // Validation
+  if(!title) { msg.textContent='⚠️ Game title daalo.'; msg.className='msg err'; return; }
+  if(!desc)  { msg.textContent='⚠️ Description daalo.'; msg.className='msg err'; return; }
+  if(!cat)   { msg.textContent='⚠️ Category select karo.'; msg.className='msg err'; return; }
+  if(!type)  { msg.textContent='⚠️ Play type select karo.'; msg.className='msg err'; return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = 'Submitting...';
+  msg.className = 'msg';
+
+  try {
+    const meta = devUser.user_metadata || {};
+    const devName = meta.full_name || meta.name || devUser.email.split('@')[0];
+
+    const { data, error } = await sb.from('submissions').insert([{
+      title,
+      dev: devName,
+      description: desc,
+      cat,
+      type,
+      emoji,
+      email: devUser.email,
+      play_url: playUrl || null,
+      install_url: installUrl || null,
+      status: 'pending'
+    }]).select();
+
+    btn.disabled = false; btn.textContent = 'Submit for Review →';
+
+    if(error) {
+      console.error('Submit error:', error);
+      msg.textContent = '❌ Error: ' + error.message;
+      msg.className = 'msg err';
+      return;
+    }
+
+    // SUCCESS
+    document.getElementById('devSubmitWrap').style.display = 'none';
+    document.getElementById('submitSuccess').classList.add('show');
+
+    // Clear form
+    ['sTitle','sEmoji','sDesc','sPlayUrl','sInstallUrl'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('sCat').value = '';
+    document.getElementById('sType').value = '';
+
+  } catch(e) {
+    btn.disabled = false; btn.textContent = 'Submit for Review →';
+    msg.textContent = '❌ Error: ' + e.message;
+    msg.className = 'msg err';
+    console.error(e);
+  }
 }
 
 // ===== DEV LOGOUT =====
