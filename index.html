@@ -549,42 +549,50 @@ const sb = window.supabase.createClient(SB_URL, SB_KEY);
 // ADMIN EMAIL — change this to YOUR email
 const ADMIN_EMAIL = 'anshulvijay171@gmail.com';
 
-// ===== ADMIN CREDENTIALS (change these!) =====
-const ADMIN_USERNAME = 'agnam_admin';
-const ADMIN_PASSWORD_HASH = 'agnam@2026#studio'; // change this password
-// =============================================
-
-function checkAdminLogin() {
+// ===== ADMIN LOGIN — Supabase se check hoga =====
+async function checkAdminLogin() {
   const username = document.getElementById('adminUsername').value.trim();
   const password = document.getElementById('adminPassword').value;
   const msg = document.getElementById('adminLoginMsg');
   const btn = document.getElementById('adminLoginBtn');
 
   if(!username || !password) {
-    msg.textContent = '⚠️ Enter username and password.';
+    msg.textContent = '⚠️ Username aur password daalo.';
     msg.className = 'msg err';
     return;
   }
 
   btn.disabled = true; btn.textContent = 'Logging in...';
 
-  // Simulate a small delay for security feel
-  setTimeout(() => {
+  try {
+    // Supabase admins table se check karo
+    const { data, error } = await sb
+      .from('admins')
+      .select('username')
+      .eq('username', username)
+      .eq('password', password)
+      .single();
+
     btn.disabled = false; btn.textContent = 'Login →';
-    if(username === ADMIN_USERNAME && password === ADMIN_PASSWORD_HASH) {
-      closeOverlay('adminLoginOverlay');
-      document.getElementById('adminEmailTxt').textContent = 'AGNAM Admin';
-      openOverlay('adminOverlay');
-      loadPending();
-      // Clear fields
-      document.getElementById('adminUsername').value = '';
-      document.getElementById('adminPassword').value = '';
-      msg.className = 'msg';
-    } else {
+
+    if(error || !data) {
       msg.textContent = '❌ Wrong username or password!';
       msg.className = 'msg err';
+    } else {
+      // SUCCESS
+      msg.className = 'msg';
+      closeOverlay('adminLoginOverlay');
+      document.getElementById('adminEmailTxt').textContent = 'AGNAM Admin (' + username + ')';
+      openOverlay('adminOverlay');
+      loadPending();
+      document.getElementById('adminUsername').value = '';
+      document.getElementById('adminPassword').value = '';
     }
-  }, 600);
+  } catch(e) {
+    btn.disabled = false; btn.textContent = 'Login →';
+    msg.textContent = '❌ Error: ' + e.message;
+    msg.className = 'msg err';
+  }
 }
 
 let games = [], devUser = null, catFilter = 'all', typeFilter = 'all';
