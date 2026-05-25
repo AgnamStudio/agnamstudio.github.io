@@ -193,14 +193,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;display:flex;ali
 .pm-install:hover{border-color:var(--blue);color:var(--blue)}
 
 /* ANALYTICS */
-.analytics-modal{max-width:680px}
+.analytics-modal{max-width:720px}
 .analytics-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:24px}
 .a-card{background:var(--off);border:1px solid var(--border);border-radius:14px;padding:20px}
 .a-card-n{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--blue);margin-bottom:4px}
 .a-card-l{font-size:.72rem;color:var(--gray);font-weight:600;text-transform:uppercase;letter-spacing:.07em}
 .a-section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;margin-bottom:12px;margin-top:8px}
 .a-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.a-bar-label{font-size:.78rem;color:var(--dark);width:80px;flex-shrink:0}
+.a-bar-label{font-size:.78rem;color:var(--dark);width:90px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .a-bar-wrap{flex:1;height:8px;background:var(--border);border-radius:100px;overflow:hidden}
 .a-bar-fill{height:100%;background:var(--blue);border-radius:100px;transition:width .8s ease}
 .a-bar-val{font-size:.75rem;color:var(--gray);width:30px;text-align:right;flex-shrink:0}
@@ -210,6 +210,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;display:flex;ali
 .tg-info{flex:1}
 .tg-info strong{font-size:.85rem;font-weight:600;display:block}
 .tg-info span{font-size:.72rem;color:var(--gray)}
+.vis-table{width:100%;border-collapse:collapse;font-size:.78rem}
+.vis-table th{font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--gray);padding:7px 10px;text-align:left;border-bottom:1px solid var(--border)}
+.vis-table td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--dark)}
+.vis-table tr:last-child td{border-bottom:none}
+.vis-table tr:hover td{background:var(--off)}
 
 /* ADMIN */
 .admin-trigger{position:fixed;bottom:16px;right:16px;z-index:500;width:10px;height:10px;border-radius:50%;background:rgba(0,102,255,.15);cursor:pointer;border:none;transition:all .3s}
@@ -481,7 +486,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;display:flex;ali
   <div class="modal analytics-modal">
     <button class="modal-close" onclick="closeOverlay('analyticsOverlay')">✕</button>
     <div class="modal-badge">📊 Analytics</div>
-    <h2>Site Analytics</h2>
+    <h2>Visitor Intelligence</h2>
     <p class="msub">Real-time data — only visible to you.</p>
     <div class="analytics-grid">
       <div class="a-card"><div class="a-card-n" id="aTotalVisits">-</div><div class="a-card-l">Total Visits</div></div>
@@ -489,9 +494,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;display:flex;ali
       <div class="a-card"><div class="a-card-n" id="aTotalGames">-</div><div class="a-card-l">Live Games</div></div>
       <div class="a-card"><div class="a-card-n" id="aPending">-</div><div class="a-card-l">Pending Review</div></div>
     </div>
+
     <div class="a-section-title">📱 Device Breakdown</div>
     <div id="deviceBars"></div>
-    <div class="a-section-title" style="margin-top:16px">🏆 Top Categories</div>
+
+    <div class="a-section-title" style="margin-top:18px">🌐 Browser Breakdown</div>
+    <div id="browserBars"></div>
+
+    <div class="a-section-title" style="margin-top:18px">💻 OS Breakdown</div>
+    <div id="osBars"></div>
+
+    <div class="a-section-title" style="margin-top:18px">🌍 Country Breakdown</div>
+    <div id="countryBars"></div>
+    <div id="countryTable" style="margin-top:12px"></div>
+
+    <div class="a-section-title" style="margin-top:18px">🏆 Top Categories</div>
     <div id="catBars"></div>
   </div>
 </div>
@@ -664,9 +681,49 @@ function openPlay(id) {
 }
 
 // ===== ANALYTICS =====
+function getBrowser() {
+  const ua = navigator.userAgent;
+  if (ua.includes('Edg/')) return 'Edge';
+  if (ua.includes('OPR/') || ua.includes('Opera')) return 'Opera';
+  if (ua.includes('Chrome') && !ua.includes('Chromium')) return 'Chrome';
+  if (ua.includes('Firefox')) return 'Firefox';
+  if (ua.includes('Safari') && !ua.includes('Chrome')) return 'Safari';
+  if (ua.includes('Trident') || ua.includes('MSIE')) return 'IE';
+  return 'Other';
+}
+function getOS() {
+  const ua = navigator.userAgent;
+  if (/Android/.test(ua)) return 'Android';
+  if (/iPhone|iPad|iPod/.test(ua)) return 'iOS';
+  if (/Windows/.test(ua)) return 'Windows';
+  if (/Mac/.test(ua)) return 'macOS';
+  if (/Linux/.test(ua)) return 'Linux';
+  return 'Other';
+}
+function getDevice() {
+  const ua = navigator.userAgent;
+  if (/Tablet|iPad/.test(ua) || (window.innerWidth >= 600 && /Android/.test(ua) && !/Mobile/.test(ua))) return 'Tablet';
+  if (window.innerWidth < 768 || /Mobile|iPhone|Android.*Mobile/.test(ua)) return 'Mobile';
+  return 'Desktop';
+}
 async function trackVisit() {
-  const device = window.innerWidth < 768 ? 'Mobile' : 'Desktop';
-  try { await sb.from('visits').insert([{ page:'home', device }]); } catch(e) {}
+  try {
+    let country = 'Unknown';
+    try {
+      const geo = await fetch('https://ipapi.co/json/');
+      if (geo.ok) {
+        const d = await geo.json();
+        country = d.country_name || 'Unknown';
+      }
+    } catch(e) {}
+    await sb.from('visits').insert([{
+      page: 'home',
+      device: getDevice(),
+      browser: getBrowser(),
+      os: getOS(),
+      country: country
+    }]);
+  } catch(e) {}
 }
 
 async function loadVisitCount() {
@@ -690,18 +747,41 @@ async function loadAnalytics() {
   const adminVisitEl = document.getElementById('adminVisitCount');
   if(adminVisitEl) adminVisitEl.textContent = total||0;
 
-  // Device breakdown
-  const { data:vData } = await sb.from('visits').select('device');
-  if(vData&&vData.length) {
+  // Fetch all visit detail columns
+  const { data:vData } = await sb.from('visits').select('device,browser,os,country');
+
+  function renderBars(containerId, data, field, colorVar) {
+    const el = document.getElementById(containerId);
+    if(!el || !data || !data.length) return;
     const counts = {};
-    vData.forEach(v=>{ counts[v.device||'Unknown']=(counts[v.device||'Unknown']||0)+1; });
-    const max = Math.max(...Object.values(counts));
-    document.getElementById('deviceBars').innerHTML = Object.entries(counts).map(([k,v])=>`
+    data.forEach(v => { const k = v[field]||'Unknown'; counts[k]=(counts[k]||0)+1; });
+    const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+    const max = sorted[0][1];
+    el.innerHTML = sorted.map(([k,v])=>`
       <div class="a-bar-row">
-        <div class="a-bar-label">${k}</div>
-        <div class="a-bar-wrap"><div class="a-bar-fill" style="width:${Math.round(v/max*100)}%"></div></div>
+        <div class="a-bar-label" title="${k}">${k}</div>
+        <div class="a-bar-wrap"><div class="a-bar-fill" style="width:${Math.round(v/max*100)}%;background:${colorVar||'var(--blue)'}"></div></div>
         <div class="a-bar-val">${v}</div>
       </div>`).join('');
+  }
+
+  renderBars('deviceBars', vData, 'device', 'var(--blue)');
+  renderBars('browserBars', vData, 'browser', '#7C3AED');
+  renderBars('osBars', vData, 'os', '#0891b2');
+  renderBars('countryBars', vData, 'country', '#059669');
+
+  // Country table
+  if(vData && vData.length) {
+    const cCounts = {};
+    vData.forEach(v => { const k = v.country||'Unknown'; cCounts[k]=(cCounts[k]||0)+1; });
+    const sorted = Object.entries(cCounts).sort((a,b)=>b[1]-a[1]);
+    const total2 = vData.length;
+    const tableEl = document.getElementById('countryTable');
+    if(tableEl) {
+      tableEl.innerHTML = `<table class="vis-table"><thead><tr><th>#</th><th>Country</th><th>Visits</th><th>Share</th></tr></thead><tbody>`
+        + sorted.map(([k,v],i)=>`<tr><td>${i+1}</td><td>${k}</td><td>${v}</td><td>${Math.round(v/total2*100)}%</td></tr>`).join('')
+        + `</tbody></table>`;
+    }
   }
 
   // Cat breakdown
@@ -899,7 +979,7 @@ async function loadAdminVisits() {
   try {
     const { count } = await sb.from('visits').select('*', {count:'exact', head:true});
     const el = document.getElementById('adminVisitCount');
-    if(el) el.textContent = count||0;
+    if(el) el.textContent = (count||0).toLocaleString();
   } catch(e) {}
 }
 
