@@ -275,6 +275,132 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;display:flex;ali
   .modal{padding:28px 18px}
   .form-grid{grid-template-columns:1fr}
 }
+
+/* CONTACT SECTION */
+.contact-section{
+background:#fff;
+padding:80px 20px;
+text-align:center;
+border-top:1px solid var(--border);
+}
+
+.contact-container{
+max-width:1000px;
+margin:auto;
+}
+
+.contact-badge{
+display:inline-block;
+background:rgba(0,102,255,.1);
+color:var(--blue);
+padding:6px 16px;
+border-radius:50px;
+font-size:.75rem;
+font-weight:700;
+margin-bottom:16px;
+}
+
+.contact-section h2{
+font-family:'Syne',sans-serif;
+font-size:2rem;
+margin-bottom:12px;
+}
+
+.contact-section p{
+color:var(--gray);
+margin-bottom:30px;
+}
+
+.contact-cards{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.contact-card{
+background:var(--off);
+border:1px solid var(--border);
+border-radius:16px;
+padding:25px;
+min-width:260px;
+}
+
+.contact-icon{
+font-size:2rem;
+margin-bottom:10px;
+}
+
+.contact-card a{
+color:var(--blue);
+text-decoration:none;
+font-weight:600;
+}
+
+/* FOOTER */
+.footer{
+background:var(--dark);
+color:#fff;
+padding:60px 20px 20px;
+}
+
+.footer-container{
+max-width:1200px;
+margin:auto;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:30px;
+}
+
+.footer-brand h3{
+font-family:'Syne',sans-serif;
+font-size:1.5rem;
+}
+
+.footer-brand span{
+color:var(--blue);
+}
+
+.footer-brand p{
+margin-top:10px;
+color:rgba(255,255,255,.6);
+line-height:1.7;
+}
+
+.footer-links,
+.footer-contact{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.footer-links h4,
+.footer-contact h4{
+margin-bottom:10px;
+}
+
+.footer-links a{
+color:rgba(255,255,255,.7);
+text-decoration:none;
+}
+
+.footer-links a:hover{
+color:var(--blue);
+}
+
+.footer-contact p{
+color:rgba(255,255,255,.7);
+}
+
+.footer-bottom{
+margin-top:40px;
+padding-top:20px;
+border-top:1px solid rgba(255,255,255,.08);
+text-align:center;
+color:rgba(255,255,255,.5);
+font-size:.8rem;
+}
+
 </style>
 </head>
 <body>
@@ -1165,5 +1291,72 @@ sb.auth.onAuthStateChange(async (event, session) => {
 
 loadGames();
 </script>
+<!-- CONTACT SECTION -->
+
+<section class="contact-section">
+  <div class="contact-container">
+    <div class="contact-badge">CONTACT US</div>
+    <h2>Get In Touch With AGNAM Studio</h2>
+    <p>
+      Have questions, suggestions, or want to publish your own app, game, or web tool?
+      Reach out anytime.
+    </p>
+
+```
+<div class="contact-cards">
+  <div class="contact-card">
+    <div class="contact-icon">📧</div>
+    <h3>Email</h3>
+    <a href="mailto:agnamstudio@gmail.com">agnamstudio@gmail.com</a>
+  </div>
+
+  <div class="contact-card">
+    <div class="contact-icon">📸</div>
+    <h3>Instagram</h3>
+    <a href="https://instagram.com/agnam_studio" target="_blank">
+      @agnam_studio
+    </a>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+
+<footer class="footer">
+  <div class="footer-container">
+
+```
+<div class="footer-brand">
+  <h3>AGNAM <span>Studio</span></h3>
+  <p>
+    A platform where creators can publish apps, games, and web tools for everyone.
+  </p>
+</div>
+
+<div class="footer-links">
+  <h4>Quick Links</h4>
+  <a href="#">Home</a>
+  <a href="#">Apps</a>
+  <a href="#">Games</a>
+  <a href="#">Developers</a>
+</div>
+
+<div class="footer-contact">
+  <h4>Contact</h4>
+  <p>📧 agnamstudio@gmail.com</p>
+  <p>📸 @agnam_studio</p>
+</div>
+```
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2026 AGNAM Studio. All Rights Reserved.
+  </div>
+</footer>
+
 </body>
 </html>
